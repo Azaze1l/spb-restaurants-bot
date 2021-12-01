@@ -5,7 +5,6 @@ from typing import Optional, Union, List
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pymongo.errors import PyMongoError
-from sentry_sdk import capture_exception
 from bson import ObjectId
 
 logger = logging.getLogger("events")
@@ -55,7 +54,6 @@ class InterfaceObjects:
                 button = [button for button in buttons if button["_id"] == _id]
                 return button[0]
         except PyMongoError as ex:
-            capture_exception(ex)
             logger.error(f"get_object_by_id failed: {ex}")
             return None
         except IndexError:
@@ -81,7 +79,6 @@ class InterfaceObjects:
                 cursor = db[collection].find({"type": object_type})
                 objects_info = await cursor.to_list(None)
         except PyMongoError as ex:
-            capture_exception(ex)
             logger.error(f"get_object_by_id failed: {ex}")
             return None
         return objects_info
@@ -151,7 +148,6 @@ class InterfaceObjects:
                     objects_info = await cursor.to_list(None)
                     return objects_info
         except PyMongoError as ex:
-            capture_exception(ex)
             logger.error(f"get_object_by_id failed: {ex}")
             return None
 

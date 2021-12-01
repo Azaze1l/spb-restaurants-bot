@@ -6,7 +6,6 @@ from urllib.parse import quote_plus as quote
 from app.config import settings
 from app.db.admins import Admins
 
-
 logger = logging.getLogger("events")
 
 
@@ -23,7 +22,10 @@ async def connect_to_mongodb():
         settings.MONGODB_CONNECTION_URL,
         serverSelectionTimeoutMS=10,
     )
-    #server_info = await db.client.server_info()
+    await db.client[settings.MONGO_DB]["restaurants"].create_index(
+        [("location", "2dsphere")]
+    )
+    # server_info = await db.client.server_info()
     logger.info("Obtained MongoDB connection")
     logger.info("Checking default users")
     await Admins.check_default_admin(db.client[settings.MONGO_DB])
