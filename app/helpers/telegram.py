@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Optional
 
@@ -49,11 +50,22 @@ async def send_message(message: Message):
     data.update({"parse_mode": "Markdown"})
     async with httpx.AsyncClient() as client:
         r = await client.post(url, json=data)
+        result = json.loads(r.content).get("result")
+        if result:
+            return result.get("message_id")
+        return result
 
 
 async def edit_message_text(chat_id, message_id, text):
     url = TG_BASE_URL + "editMessageText"
     data = {"chat_id": chat_id, "message_id": message_id, "text": text}
+    async with httpx.AsyncClient() as client:
+        r = await client.post(url, json=data)
+
+
+async def delete_message(chat_id, message_id):
+    url = TG_BASE_URL + "deleteMessage"
+    data = {"chat_id": chat_id, "message_id": message_id}
     async with httpx.AsyncClient() as client:
         r = await client.post(url, json=data)
 
@@ -71,13 +83,15 @@ async def edit_message_caption(chat_id, message_id, caption):
 
 
 async def edit_message_reply_markup(
-    chat_id, message_id, reply_markup: InlineKeyboardMarkup
+    chat_id, message_id, reply_markup: Optional[InlineKeyboardMarkup]
 ):
     url = TG_BASE_URL + "editMessageReplyMarkup"
     data = {
         "chat_id": chat_id,
         "message_id": message_id,
-        "reply_markup": reply_markup.dict(exclude_none=True),
+        "reply_markup": reply_markup.dict(exclude_none=True)
+        if reply_markup is not None
+        else reply_markup,
     }
     async with httpx.AsyncClient() as client:
         r = await client.post(url, json=data)
@@ -96,7 +110,9 @@ async def send_photo(chat_id, photo, caption=None, reply_markup=None):
         "chat_id": chat_id,
         "photo": photo,
         "caption": caption,
-        "reply_markup": reply_markup,
+        "reply_markup": reply_markup.dict(exclude_none=True)
+        if reply_markup is not None
+        else reply_markup,
         "parse_mode": "Markdown",
     }
     async with httpx.AsyncClient() as client:

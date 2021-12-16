@@ -5,6 +5,8 @@ from app.bot.messages.telegram import (
     get_back_to_main_menu_message,
 )
 from app.cache import update_tg_cache_state
+from app.db import get_db
+from app.db.users import Users
 from app.helpers.telegram import send_message
 from app.schemas.telegram.incoming import Update
 
@@ -16,6 +18,13 @@ async def tg_start_handler(update: Update, state_data: dict):
     """
     Хэндлер начала диалога (нажатие на кнопку "Start")
     """
+
+    db = await get_db()
+    await Users.get_or_create_user(
+        db,
+        user_id=str(update.message.from_.id),
+        platform="tg",
+    )
     state_data["state"] = None
     await update_tg_cache_state(update.message.from_.id, state_data)
 
@@ -42,7 +51,6 @@ async def tg_default_handler(update: Update, state_data: dict):
     """
     Дефолтный хэндлер, в него проваливаются все события если не найден иной хэндлер
     """
-    state_data["state"] = None
     if update.message is not None:
         chat_id = update.message.from_.id
         await update_tg_cache_state(chat_id, state_data)
