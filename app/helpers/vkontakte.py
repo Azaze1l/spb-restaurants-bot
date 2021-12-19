@@ -1,7 +1,7 @@
 import json
 import logging
 from io import BytesIO
-from typing import Optional
+from typing import Optional, List
 import PIL
 from PIL import Image
 import httpx
@@ -12,6 +12,8 @@ from app.config import settings
 from app.schemas.vkontakte.outgoing import Message
 
 MESSAGES_URL = f"https://api.vk.com/method/messages.send"
+EDIT_MESSAGE_URL = f"https://api.vk.com/method/messages.edit"
+DELETE_MESSAGE_URL = f"https://api.vk.com/method/messages.delete"
 GET_MESSAGES_UPLOAD_SERVER_URL = (
     f"https://api.vk.com/method/photos.getMessagesUploadServer"
 )
@@ -73,6 +75,24 @@ async def savePhoto(uploaded_photo: dict):
         )
         logger.info(r.json())
     return r.json()["response"][0]
+
+
+async def edit_message_keyboard(user_id, message_id, keyboard):
+    async with httpx.AsyncClient() as client:
+        data = dict(user_id=user_id, message_id=message_id, keyboard=keyboard)
+        data["access_token"] = settings.VK_TOKEN
+        data["v"] = settings.VK_API_VERSION
+        r = await client.post(EDIT_MESSAGE_URL, data=data)
+        logger.info(r.json())
+
+
+async def delete_message(message_ids: List):
+    async with httpx.AsyncClient() as client:
+        data = dict(message_ids=message_ids)
+        data["access_token"] = settings.VK_TOKEN
+        data["v"] = settings.VK_API_VERSION
+        r = await client.post(DELETE_MESSAGE_URL, data=data)
+        logger.info(r.json())
 
 
 async def get_photo_attachment(photo):
