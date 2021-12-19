@@ -3,13 +3,13 @@ from app.bot.handlers.vkontakte.find_restaurant.services import show_5_of_restau
 from app.cache import update_vk_cache_state
 from app.db import get_db
 from app.db.restaurants import Restaurants
-from app.helpers.vkontakte import send_message
+from app.helpers.vkontakte import send_message, command, button_code
 from app.schemas.vkontakte.incoming import IncomingEvent
 from app.schemas.vkontakte.outgoing import Message
 
 
 @vk_dispatcher.register_handler(
-    message_func=lambda: ("show_favorite_restaurants_button", "✨ Избранное"),
+    func=lambda event: button_code(event.object.message.payload) == "favorites",
     state_data_func=lambda state_data: state_data["state"] == "find_restaurant",
 )
 async def vk_find_restaurant_handler(event: IncomingEvent, state_data: dict):

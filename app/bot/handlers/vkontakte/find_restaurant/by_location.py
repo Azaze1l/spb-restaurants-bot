@@ -16,15 +16,15 @@ from app.schemas.vkontakte.outgoing import Message
 
 
 @vk_dispatcher.register_handler(
-    func=lambda event: command(event.object.message.payload) == "by_location",
+    func=lambda event: button_code(event.object.message.payload) == "by_location",
     state_data_func=lambda state_data: state_data["state"] == "find_restaurant",
 )
 async def vk_find_restaurant_by_location_handler(
     event: IncomingEvent, state_data: dict
 ):
     state_data["state"] = "find_restaurant|waiting_for_location"
-    msg = await get_request_location_message()
-    msg.reply_markup = await get_waiting_for_location_keyboard()
+    msg = await get_request_location_message(int(event.object.message.from_id))
+    msg.keyboard = await get_waiting_for_location_keyboard()
     await update_vk_cache_state(event.object.message.from_id, state_data)
     await send_message(msg)
 
@@ -50,7 +50,7 @@ async def vk_restaurant_location_handler(event: IncomingEvent, state_data: dict)
 
 
 @vk_dispatcher.register_handler(
-    func=lambda event: command(event.object.message.payload) == "by_nearest",
+    func=lambda event: button_code(event.object.message.payload) == "by_nearest",
     state_data_func=lambda state_data: state_data["state"]
     == "find_restaurant|by_location",
 )
@@ -71,7 +71,7 @@ async def vk_find_nearest_restaurants_handler(event: IncomingEvent, state_data: 
 
 
 @vk_dispatcher.register_handler(
-    func=lambda event: command(event.object.message.payload) == "by_district",
+    func=lambda event: button_code(event.object.message.payload) == "by_district",
     state_data_func=lambda state_data: state_data["state"]
     == "find_restaurant|by_location",
 )
@@ -116,7 +116,7 @@ async def vk_find_restaurants_in_current_district_handler(
         "find_restaurant|by_location|district",
         "find_restaurant|by_location|nearest",
     ],
-    func=lambda event: command(event.object.message.payload) == "back",
+    func=lambda event: button_code(event.object.message.payload) == "back",
 )
 async def vk_back_to_prev_step_of_finding_restaurant_handler(
     event: IncomingEvent, state_data: dict

@@ -1,5 +1,5 @@
 from app.bot import vk_dispatcher
-from app.bot.handlers import process_filters_state
+from app.bot.handlers.vkontakte.find_restaurant.services import process_filters_state
 from app.bot.handlers.vkontakte.find_restaurant.services import show_5_of_restaurants
 from app.bot.messages.vkontakte import (
     get_choose_type_of_food_message,
@@ -14,17 +14,18 @@ from app.config import settings
 from app.db import get_db
 from app.db.restaurants import Restaurants
 from app.helpers.vkontakte import (
-    command,
     send_message,
     edit_message_keyboard,
     delete_message,
+    button_code,
 )
 from app.schemas.vkontakte.incoming import IncomingEvent
 from app.schemas.vkontakte.outgoing import Message
 
 
 @vk_dispatcher.register_handler(
-    func=lambda event: command(event.object.message.payload) == "find_restaurant",
+    func=lambda event: button_code(event.object.message.payload)
+    == "by_list_of_proposed",
     state_data_func=lambda state_data: state_data["state"] == "find_restaurant",
 )
 async def vk_find_restaurant_handler(event: IncomingEvent, state_data: dict):
@@ -43,7 +44,7 @@ async def vk_find_restaurant_handler(event: IncomingEvent, state_data: dict):
 
 
 @vk_dispatcher.register_handler(
-    func=lambda event: command(event.object.message.payload) == "next",
+    func=lambda event: button_code(event.object.message.payload) == "next",
     state_data_func=lambda state_data: state_data["state"]
     in [
         "find_restaurant|find_by_category|food_type",
@@ -106,7 +107,7 @@ async def vk_steps_to_show_restaurants_handler(event: IncomingEvent, state_data:
         "find_restaurant|find_by_category|meal_type",
         "find_restaurant|find_by_category|showing_restaurants",
     ],
-    func=lambda event: command(event.object.message.payload) == "back",
+    func=lambda event: button_code(event.object.message.payload) == "back",
 )
 async def vk_back_to_prev_step_of_finding_restaurant_handler(
     event: IncomingEvent, state_data: dict
@@ -148,7 +149,7 @@ async def vk_back_to_prev_step_of_finding_restaurant_handler(
 
 
 @vk_dispatcher.register_handler(
-    func=lambda event: command(event.object.message.payload) == "change_filters",
+    func=lambda event: button_code(event.object.message.payload) == "change_filters",
     state_data_func=lambda state_data: state_data["state"]
     in [
         "find_restaurant|find_by_category|food_type",
@@ -182,7 +183,7 @@ async def vk_process_restaurant_filters_states_handler(
 
 
 @vk_dispatcher.register_handler(
-    func=lambda event: command(event.object.message.payload) == "show_more",
+    func=lambda event: button_code(event.object.message.payload) == "show_more",
     state_data_func=lambda state_data: state_data["state"]
     in [
         "find_restaurant|find_by_category|showing_restaurants",
@@ -235,10 +236,10 @@ async def vk_show_more_restaurants_handler(event: IncomingEvent, state_data: dic
 
 
 @vk_dispatcher.register_handler(
-    func=lambda event: command(event.object.message.payload).startswith(
+    func=lambda event: button_code(event.object.message.payload).startswith(
         "out_of_favorites"
     )
-    or command(event.object.message.payload).startswith("in_favorites"),
+    or button_code(event.object.message.payload).startswith("in_favorites"),
     state_data_func=lambda state_data: state_data["state"]
     in [
         "find_restaurant|find_by_category|showing_restaurants",

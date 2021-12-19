@@ -19,9 +19,9 @@ async def process_filters_state(filters_state, filter_name, event):
     for filter_frame in filters_state:
         if filter_frame["name"] == filter_name:
             filter_frame["value"] = not filter_frame["value"]
-            if event.objects.message.text[0] == "◼":
+            if event.object.message.text[0] == "◼":
                 msg = await get_positive_filters_state_message(
-                    int(event.objects.message.from_id), filter_name
+                    int(event.object.message.from_id), filter_name
                 )
                 msg.keyboard = (
                     await get_choose_type_of_parameter_in_restaurant_keyboard(
@@ -31,7 +31,7 @@ async def process_filters_state(filters_state, filter_name, event):
                 await send_message(msg)
             else:
                 msg = await get_negative_filters_state_message(
-                    int(event.objects.message.from_id), filter_name
+                    int(event.object.message.from_id), filter_name
                 )
                 msg.keyboard = (
                     await get_choose_type_of_parameter_in_restaurant_keyboard(

@@ -37,7 +37,7 @@ def get_searching_filter_keyboard(current_filters_state) -> List:
     title="Клавиатура для отката на шаг назад/возвращения в главное меню",
     platform="vk",
 )
-async def get_step_back_keyboard(modifiable):
+async def get_step_back_keyboard(modifiable=None):
     text = await check_for_modifying("step_back_button", modifiable, "⬅️ Назад")
     step_back_button = format_button(text, "back")
     text = await check_for_modifying(
@@ -46,10 +46,10 @@ async def get_step_back_keyboard(modifiable):
     to_main_menu_button = format_button(text, "to_main_menu")
     keyboard = Keyboard(
         buttons=[
+            [step_back_button],
             [
-                step_back_button,
                 to_main_menu_button,
-            ]
+            ],
         ]
     )
     return keyboard

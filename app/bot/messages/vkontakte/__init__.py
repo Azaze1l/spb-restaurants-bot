@@ -56,7 +56,6 @@ async def get_find_restaurant_message(user_id: int, modifiable=None) -> Message:
         ),
     )
     msg.keyboard = await get_find_restaurant_keyboard()
-
     return msg
 
 

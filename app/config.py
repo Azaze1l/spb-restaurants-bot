@@ -6,9 +6,7 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    DOMAIN: str = ""
-    TG_BOT_USERNAME: str = ""
-    VK_GROUP_USERNAME: str = ""
+    DOMAIN: str = "3085-62-152-34-49.ngrok.io"
 
     SECRET_KEY: str = secrets.token_urlsafe(32)
     DEFAULT_ADMIN_LOGIN: str = "admin"
@@ -21,10 +19,10 @@ class Settings(BaseSettings):
     LOG_INCOMING_EVENTS: bool = True
 
     TG_TOKEN: str = "1340132763:AAGmsEMlWk95dyVsbiZOphpbcdJT4xD7QSI"
-    VK_TOKEN: str = ""
+    VK_TOKEN: str = "5f12fe0def99a93d9afdd008b252067a3b37f9280d9c9cf19bcaac8b9e1f6b1c0b3968274e2331bb4da41"
 
     VK_API_VERSION: str = "5.87"
-    VK_CONFIRMATION_TOKEN: str = ""
+    VK_CONFIRMATION_TOKEN: str = "dc1c3e4d"
     REDIS_URL: str = "redis://localhost:6379"
     REDIS_PASSWORD: str = ""
 
