@@ -6,7 +6,7 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    DOMAIN: str = "4947-5-18-167-6.ngrok.io"
+    DOMAIN: str = ""
     TG_BOT_USERNAME: str = ""
     VK_GROUP_USERNAME: str = ""
 
