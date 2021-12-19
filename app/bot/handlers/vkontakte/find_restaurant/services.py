@@ -73,11 +73,10 @@ async def show_5_of_restaurants(
                     show_more=False,
                 )
             if picture:
-                attachment = await get_photo_by_link(picture)
                 await send_message(
                     Message(
                         user_id=user_id,
-                        attachment=attachment,
+                        attachment=picture,
                         keyboard=keyboard,
                         message=get_restaurant_info_message_text(restaurants[i]),
                     )

@@ -101,6 +101,7 @@ async def get_photo_attachment(photo):
             UPLOAD_PHOTO_URL,
             data={"access_token": settings.VK_TOKEN, "v": settings.VK_API_VERSION},
         )
+        print(r.json())
         url = r.json()["response"]["upload_url"]
 
     uploaded_photo = await uploadPhoto(photo, url)
